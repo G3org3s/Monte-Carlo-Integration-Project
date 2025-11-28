@@ -52,7 +52,7 @@ public class App extends Application {
         double left = -15;
         double right = 25;
         
-        ExpressionBuilder f = new ExpressionBuilder("2x - 2");
+        ExpressionBuilder f = new ExpressionBuilder("100000000x^2");
         f.variable("x");
         Expression g = f.build();
         g.setVariable("x", 0);
@@ -64,14 +64,14 @@ public class App extends Application {
         System.out.println(maxi);
         
         double rn = 0;
-        for (int i = 0; i < 10; i ++) {
-            HashMap<Double, Double> pointss = plotPoints(left, right, mini, maxi, 5000);
-            double area = integrateMonteCarlo(g, left, right, pointss);
-            rn += area;
-        }
-        HashMap<Double, Double> pointss = plotPoints(left, right, mini, maxi, 10000);
+//        for (int i = 0; i < 10; i ++) {
+//            HashMap<Double, Double> pointss = plotPoints(left, right, mini, maxi, 5000);
+//            double area = integrateMonteCarlo(g, left, right, pointss);
+//            rn += area;
+//        }
+//        HashMap<Double, Double> pointss = plotPoints(left, right, mini, maxi, 10000);
         
-        double area2 = integrateRiem(g, left, right, 100, "left");
+        double area2 = integrateRiem(g, left, right, 500000, "left");
         
         HashMap<Double, Double> pointss2 = plotPoints(left, right, mini, maxi, 50000);
         double area3 = integrateMonteCarlo(g, left, right, pointss2);
@@ -98,6 +98,15 @@ public class App extends Application {
         launch();
     }
     
+    /**
+     * Calculates the net area under a curve for a function under a specified range.
+     * Uses the monte carlo method to estimate the area.
+     * @param function the function which must be integrated
+     * @param leftBound left bound of integration
+     * @param rightBound right bound for integration
+     * @param randPoints random points which were already generated. Used to integrate with this method
+     * @return returns an estimate of the area under the curve between the 2 bounds
+     */
     public static double integrateMonteCarlo(Expression function, double leftBound, double rightBound, HashMap<Double, Double> randPoints) {
         double minValue = getMin(function, leftBound, rightBound);
         double maxValue = getMax(function, leftBound, rightBound);
@@ -122,12 +131,19 @@ public class App extends Application {
         double rectArea = (rightBound - leftBound) * (maxValue - minValue);
 
         long numPoints = randPoints.size();
-        
         double posArea = (counterPos / numPoints) * rectArea;
         double negArea = (counterNeg / numPoints) * rectArea;
+        
         return posArea - negArea;
     }
     
+    /**
+     * Find the minimum value (y value) of a function on the given range
+     * @param function the function
+     * @param leftBound the left bound of the range
+     * @param rightBound the right bound of the range
+     * @return the smallest y value found on the range between the 2 bounds
+     */
     public static double getMin(Expression function, double leftBound, double rightBound){
         double min = Double.POSITIVE_INFINITY;
         
@@ -143,6 +159,13 @@ public class App extends Application {
         return min;
     }
     
+    /**
+     * Finds the maximum y value of a function on a given range
+     * @param function the function 
+     * @param leftBound the left bound of the range
+     * @param rightBound the right bound of the range
+     * @return the biggest y value found on the range between the 2 bounds
+     */
     public static double getMax(Expression function, double leftBound, double rightBound){
         double max = Double.NEGATIVE_INFINITY;
         
@@ -154,10 +177,22 @@ public class App extends Application {
                 max = value;
             }
         }
-        
+        ssss
         return max;
     }
     
+    /**
+     * Generates random points in a rectangle area. 
+     * @param leftBound minimum x value for any generated point
+     * @param rightBound maximum x value for any generated point
+     * @param min minimum y value for any generated point. Its the minimum value
+     * of the function on the range of integration.
+     * @param max maximum y value for any generated point. Its the maximum value
+     * of the function on the range of integration.
+     * @param numPoints the number of points the user wants to generate
+     * @return returns a HashMap<Double,Double> containing all the generated points.
+     * The key in the HashMap is the x value, the value is the y value of the point. 
+     */
     public static HashMap<Double, Double> plotPoints(double leftBound, double rightBound, double min, double max, long numPoints) {
         HashMap<Double, Double> points = new HashMap();
         
@@ -168,8 +203,18 @@ public class App extends Application {
         }
         
         return points;
-    } 
+    }
     
+    /**
+     * Calculates the area of a function on a given range using Riemann sums
+     * @param function the function to integrate
+     * @param leftBound the left bound of integration
+     * @param rightBound the right bound of integration
+     * @param numPoints the number of rectangles to split the range in
+     * @param endPoints endpoints for the rectangles (left or right)
+     * @return Returns the area under the curve on the range
+     * as estimated by the Riemann sum method.
+     */
     public static double integrateRiem(Expression function, double leftBound, double rightBound, long numPoints, String endPoints) {
         double range = rightBound - leftBound;
         double dx = range / numPoints;
