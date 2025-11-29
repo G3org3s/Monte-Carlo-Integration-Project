@@ -157,11 +157,11 @@ public class MainViewController {
             // Checking lower bound and number of points and integration type
             
         if (methodCombo.getValue() == null) {
-            errorMessage.setText("Integration type not specified.");
+            errorMessage.setText("Integration type not specified");
             chart.getData().clear();
             return;
         } else if ("Riemann Sum".equals(methodCombo.getValue()) && endpointCombo.getValue() == null) {
-            errorMessage.setText("Riemann Sum direction not specified.");
+            errorMessage.setText("Riemann Sum direction not specified");
             chart.getData().clear();
             return;
         }
@@ -170,7 +170,7 @@ public class MainViewController {
         try {
             lowerBound = Double.parseDouble(lowerBoundText.getText());
         } catch (NumberFormatException e) {
-            errorMessage.setText("Lower bound must be a valid double.");
+            errorMessage.setText("Lower bound must be a valid double");
             chart.getData().clear();
             return;
         }
@@ -179,7 +179,7 @@ public class MainViewController {
         try {
             upperBound = Double.parseDouble(upperBoundText.getText());
         } catch (NumberFormatException e) {
-            errorMessage.setText("Upper bound must be a valid double.");
+            errorMessage.setText("Upper bound must be a valid double");
             chart.getData().clear();
             return;
         }
@@ -188,14 +188,14 @@ public class MainViewController {
         try {
             numPoints = Integer.parseInt(numPointsText.getText());
         } catch (NumberFormatException e) {
-            errorMessage.setText("Number of points must be a valid integer.");
+            errorMessage.setText("Number of points must be a valid integer");
             chart.getData().clear();
             return;
         }
         
         // Order check
         if (lowerBound >= upperBound) {
-            errorMessage.setText("Lower bound must be strictly less than upper bound.");
+            errorMessage.setText("Lower bound must be strictly less than upper bound");
             chart.getData().clear();
             return;
         }
@@ -209,7 +209,7 @@ public class MainViewController {
         
         // Checks to see if the number of points is a reasonable number
         if (numPoints <= 0 || numPoints > 1000000) {
-            errorMessage.setText("Number of points must be between 1 and 1,000,000.");
+            errorMessage.setText("Number of points must be between 1 and 1,000,000");
             chart.getData().clear();
             return;
         }
@@ -249,7 +249,7 @@ public class MainViewController {
         
         // Plot as many points as possible into the line chart to make it properly estimate the function
         for (double x = lowerBound; x <= upperBound; x += 0.001) { // TODO: Make the 0.0001 match Georges' function
-            currentExpression.setVariable("x", Math.round(x * 1000) / 1000); // Round it to make sure changing it by a small number doesn't mess anything up
+            currentExpression.setVariable("x", (double)(Math.round(lowerBound * 1000)) / 1000); // Round it to make sure changing it by a small number doesn't mess anything up
             
             double y;
             try {
@@ -267,7 +267,7 @@ public class MainViewController {
                 currentExpression = null;
                 chart.getData().clear();
             
-                errorMessage.setText("Invalid function");
+                errorMessage.setText("Function is not continuous on the interval");
                 return;
             }
         }
