@@ -31,36 +31,23 @@ import javafx.scene.shape.Rectangle;
  * - Validates input and reports error messages
  */
 public class MainViewController {
-
-    //Line chart that displays f(x)
-    private LineChart<Number, Number> chart;
-
-    //X-axis (domain) for the chart
-    private NumberAxis xAxis;
-
-    //Y-axis (range) for the chart
-    private NumberAxis yAxis;
-
-    private Expression currentFunction;
-
-    private Group riemannGroup;
+    
+        // FXML References
+    
+    @FXML
+    private StackPane graphPane; // The Pane containing the LineChart
 
     @FXML
-    private StackPane graphPane;
+    private Label errorMessage; // Label displaying errors
 
     @FXML
-    private Label errorMessage;
-
-    //Label for endpoint selection (visible only for Riemann Sum method)
-    @FXML
-    private Label endpointsLabel;
-
-    //ComboBox for selecting "Left" or "Right" endpoints (Riemann Sum)
-    @FXML
-    private ComboBox<String> endpointCombo;
+    private Label endpointsLabel; //Label for endpoint selection (visible only for Riemann Sum method)
 
     @FXML
-    private TextField equationText;
+    private ComboBox<String> endpointCombo; //ComboBox for selecting "Left" or "Right" endpoints (Riemann Sum)
+
+    @FXML
+    private TextField equationText; // The equation TextField
 
     @FXML
     private TextField lowerBoundText;
@@ -77,62 +64,258 @@ public class MainViewController {
     @FXML
     private Label netAreaValue;
 
+        // Variables
+    
+    private LineChart<Number, Number> chart; // Line chart that displays f(x)
+
+    private NumberAxis xAxis; // X-axis (domain) for the chart
+
+    private NumberAxis yAxis; // Y-axis (range) for the chart
+
+    private Expression currentExpression; // The current equation in expression form
+    
+    private double lowerBound; // The lower bound of the function
+    
+    private double upperBound; // The upper bound of the function
+    
+    private int numPoints; // The number of points of integration estimation
+    
     /**
-     * - Initialize combo boxes 
+     * - Initialize ComboBoxes 
      * - Create and configure the chart 
      * - Bind the chart to the StackPane so it always fills it 
      * - Add listeners so that the graph updates automatically
      */
     @FXML
     private void initialize() {
+        // Adds the ComboBox options
         methodCombo.getItems().addAll("Monte Carlo", "Riemann Sum");
         endpointCombo.getItems().addAll("Left", "Right");
 
-        //Endpoints controls not visible until "Riemann Sum" method is selected
+        // Endpoints controls not visible until "Riemann Sum" method is selected
         endpointsLabel.setVisible(false);
         endpointCombo.setVisible(false);
 
-        //Create axes and chart
+        // Create axes and chart
         xAxis = new NumberAxis();
         xAxis.setLabel("x");
+        xAxis.setAutoRanging(false);
+        
         yAxis = new NumberAxis();
         yAxis.setLabel("f(x)");
+        
         chart = new LineChart<>(xAxis, yAxis);
         chart.setLegendVisible(false);
-        chart.setCreateSymbols(false);   // smooth line, no circles
+        chart.setCreateSymbols(false);
 
-        //Make the chart fill the graphPane
+        // Make the chart fill the graphPane
         chart.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         chart.prefWidthProperty().bind(graphPane.widthProperty());
         chart.prefHeightProperty().bind(graphPane.heightProperty());
         graphPane.getChildren().add(chart);
 
-        //When the equation changes, update the function and try to plot the graph
+        // When the equation changes, update the function and try to plot the graph
         equationText.textProperty().addListener((obs, oldValue, newValue) -> {
-            buildFunctionAndGraph(newValue);
+            buildAndVerify(newValue);
         });
 
-        //When lower bound changes, replot if we have a valid function
+        //When lower bound changes, update function and processes
         lowerBoundText.textProperty().addListener((obs, oldValue, newValue) -> {
-            if (currentFunction != null) {
-                plotFunction(currentFunction);
-            }
+            buildAndVerify(equationText.getText());
         });
 
-        //When upper bound changes, replot if we have a valid function
+        // When upper bound changes, update function and processes
         upperBoundText.textProperty().addListener((obs, oldValue, newValue) -> {
-            if (currentFunction != null) {
-                plotFunction(currentFunction);
-            }
+            buildAndVerify(equationText.getText());
+        });
+        
+        // When the number of points change, update function and processes
+        numPointsText.textProperty().addListener((obs, oldValue, newValue) -> {
+            buildAndVerify(equationText.getText());
+        });
+        
+        // When integration method is changed, update function and processes
+        methodCombo.valueProperty().addListener((obs, oldValue, newValue) -> {
+            buildAndVerify(equationText.getText());
+        });
+        
+        endpointCombo.valueProperty().addListener((obs, oldValue, newValue) -> {
+            buildAndVerify(equationText.getText());
         });
     }
 
+    /**
+     * Parses the user-entered equation into an Expression using exp4j. 
+     * Tries to plot it immediately if bounds are present and valid.
+     *
+     * @param equation the string from equationText
+     */
+    private void buildAndVerify(String equation) {
+            // Checking lower bound and number of points and integration type
+            
+        if (methodCombo.getValue() == null) {
+            errorMessage.setText("Integration type not specified.");
+            chart.getData().clear();
+            return;
+        } else if ("Riemann Sum".equals(methodCombo.getValue()) && endpointCombo.getValue() == null) {
+            errorMessage.setText("Riemann Sum direction not specified.");
+            chart.getData().clear();
+            return;
+        }
+        
+        // Validate lower bound
+        try {
+            lowerBound = Double.parseDouble(lowerBoundText.getText());
+        } catch (NumberFormatException e) {
+            errorMessage.setText("Lower bound must be a valid double.");
+            chart.getData().clear();
+            return;
+        }
+
+        // Validate upper bound
+        try {
+            upperBound = Double.parseDouble(upperBoundText.getText());
+        } catch (NumberFormatException e) {
+            errorMessage.setText("Upper bound must be a valid double.");
+            chart.getData().clear();
+            return;
+        }
+
+        // Validate number of points
+        try {
+            numPoints = Integer.parseInt(numPointsText.getText());
+        } catch (NumberFormatException e) {
+            errorMessage.setText("Number of points must be a valid integer.");
+            chart.getData().clear();
+            return;
+        }
+        
+        // Order check
+        if (lowerBound >= upperBound) {
+            errorMessage.setText("Lower bound must be strictly less than upper bound.");
+            chart.getData().clear();
+            return;
+        }
+        
+        // Checks to see if the upper and lower bounds are within their limits
+        if (lowerBound < -1000 || upperBound > 1000) {
+            errorMessage.setText("Upper bound has to be less than 1000 and lower bound has to be greater than -1000");
+            chart.getData().clear();
+            return;
+        }
+        
+        // Checks to see if the number of points is a reasonable number
+        if (numPoints <= 0 || numPoints > 1000000) {
+            errorMessage.setText("Number of points must be between 1 and 1,000,000.");
+            chart.getData().clear();
+            return;
+        }
+        
+            // Checking to see if equation is valid
+            
+        // If the equation box is empty, clear everything
+        if (equation == null || equation.isBlank()) {
+            currentExpression = null;
+            chart.getData().clear();
+            
+            errorMessage.setText("No equation selected");
+            return;
+        }
+
+        // Making sure the function doesn't contain tan or cot
+        if (equation.contains("tan") || equation.contains("cot")) {
+            currentExpression = null;
+            chart.getData().clear();
+            
+            errorMessage.setText("Tangent and cotangent functions are not supported");
+            return;
+        }
+        
+        // Checking to see if equation syntax is valid
+        try {
+            ExpressionBuilder eb = new ExpressionBuilder(equation).variable("x");
+            currentExpression = eb.build();
+
+        } catch (Exception e) {
+            currentExpression = null;
+            chart.getData().clear();
+            
+            errorMessage.setText("Invalid function");
+            return;
+        }
+        
+        // Plot as many points as possible into the line chart to make it properly estimate the function
+        for (double x = lowerBound; x <= upperBound; x += 0.001) { // TODO: Make the 0.0001 match Georges' function
+            currentExpression.setVariable("x", Math.round(x * 1000) / 1000); // Round it to make sure changing it by a small number doesn't mess anything up
+            
+            double y;
+            try {
+                y = currentExpression.evaluate();
+            } catch (Exception e) {
+                currentExpression = null;
+                chart.getData().clear();
+            
+                errorMessage.setText("Invalid function");
+                return;
+            }
+
+            // Check to see if a point is NaN or infinity
+            if (Double.isNaN(y) || Double.isInfinite(y)) {
+                currentExpression = null;
+                chart.getData().clear();
+            
+                errorMessage.setText("Invalid function");
+                return;
+            }
+        }
+        
+        errorMessage.setText("");
+        
+        // Plot the function using the current bounds
+        plotFunction(currentExpression);
+            
+        // TODO: call Georges' equations method
+        
+    }
+
+    /**
+     * Plots the given Expression on the LineChart, using the bounds in
+     * lowerBoundText and upperBoundText. If bounds are missing or invalid, the
+     * chart is cleared and an error message is shown
+     *
+     * @param expression a compiled exp4j Expression representing f(x)
+     */
+    private void plotFunction(Expression expression) {
+        // Update upper and lower bounds
+        xAxis.setLowerBound(lowerBound);
+        xAxis.setUpperBound(upperBound);
+        
+        // Create a new series and sample the function between [a, b]
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+        chart.getData().clear(); // remove any old series
+
+        // Use a fixed number of sample points for a smooth curve
+        double dx = (upperBound - lowerBound) / 1000; // TODO: Turn the 1000 (number of points) into whatever Georges used for his calculations
+
+        // Plot as many points as possible into the line chart to make it properly estimate the function
+        for (double x = lowerBound; x <= upperBound; x += dx) {
+            expression.setVariable("x", x);
+            series.getData().add(new XYChart.Data<>(x, expression.evaluate()));
+        }
+
+        // Add the series
+        chart.getData().add(series);
+        errorMessage.setText("");
+    }
+
+    
+    
     /**
      * Called when the integration method ComboBox value changes 
      * Shows or hides the endpoint controls when "Riemann Sum" is selected
      */
     @FXML
-    void onMethodSelected(ActionEvent event) {
+    private void onMethodSelected(ActionEvent event) {
         String selected = methodCombo.getValue();
 
         if (selected == null) {
@@ -150,10 +333,10 @@ public class MainViewController {
 
     /**
      * Called when the "Clear" button is pressed
-     * Resets all text fields, comboboxes, the chart and the error label
+     * Resets all text fields, ComboBoxes, the chart and the error label
      */
     @FXML
-    void clearOnAction(ActionEvent event) {
+    private void clearOnAction(ActionEvent event) {
         lowerBoundText.clear();
         upperBoundText.clear();
         numPointsText.clear();
@@ -163,168 +346,10 @@ public class MainViewController {
         endpointsLabel.setVisible(false);
         endpointCombo.setVisible(false);
 
-        currentFunction = null;
+        currentExpression = null;
         chart.getData().clear();
         errorMessage.setText("");
         netAreaValue.setText("");
-
-    }
-
-    /**
-     * Parses the user-entered equation into an Expression using exp4j. 
-     * Tries to plot it immediately if bounds are present and valid.
-     *
-     * @param equation the string from equationText
-     */
-    private void buildFunctionAndGraph(String equation) {
-        // If the equation box is empty, just clear everything
-        if (equation == null || equation.isBlank()) {
-            currentFunction = null;
-            chart.getData().clear();
-            errorMessage.setText("");
-            return;
-        }
-
-        try {
-            //Build an expression with a single variable 'x'
-            ExpressionBuilder eb = new ExpressionBuilder(equation).variable("x");
-            currentFunction = eb.build();
-
-            //If we get here, parsing is successful
-            errorMessage.setText("");
-
-            // Try to plot the function using the current bounds
-            plotFunction(currentFunction);
-
-        } catch (Exception e) {
-            // Any exception here means the function is invalid
-            currentFunction = null;
-            chart.getData().clear();
-            errorMessage.setText("Invalid function");
-        }
-    }
-
-    /**
-     * Plots the given Expression on the LineChart, using the bounds in
-     * lowerBoundText and upperBoundText. If bounds are missing or invalid, the
-     * chart is cleared and an error message is shown
-     *
-     * @param function a compiled exp4j Expression representing f(x)
-     */
-    private void plotFunction(Expression function) {
-
-        //Bounds must be filled
-        if (lowerBoundText.getText().isBlank()
-                || upperBoundText.getText().isBlank()) {
-            chart.getData().clear();
-            errorMessage.setText("Enter both lower and upper bounds to see the graph.");
-            return;
-        }
-
-        //Parse bounds as doubles
-        double a, b;
-        try {
-            a = Double.parseDouble(lowerBoundText.getText());
-            b = Double.parseDouble(upperBoundText.getText());
-        } catch (NumberFormatException e) {
-            chart.getData().clear();
-            errorMessage.setText("Bounds must be numeric values ");
-            return;
-        }
-
-        //Validate bounds order
-        if (a >= b) {
-            chart.getData().clear();
-            errorMessage.setText("Lower bound must be less than upper bound.");
-            return;
-        }
-
-        //Create a new series and sample the function between [a, b]
-        XYChart.Series<Number, Number> series = new XYChart.Series<>();
-        chart.getData().clear(); // remove any old series
-
-        // Use a fixed number of sample points for a smooth curve
-        final int SAMPLES = 200;
-        double step = (b - a) / SAMPLES;
-
-        for (double x = a; x <= b; x += step) {
-            function.setVariable("x", x);
-            double y;
-            try {
-                y = function.evaluate();
-            } catch (Exception e) {
-                //If evaluation fails at some x, just skip that point
-                continue;
-            }
-
-            //Ignore NaN or infinite values so they don't break the chart
-            if (Double.isNaN(y) || Double.isInfinite(y)) {
-                continue;
-            }
-
-            series.getData().add(new XYChart.Data<>(x, y));
-        }
-
-        //If we didn't get any valid points, update the error message
-        if (series.getData().isEmpty()) {
-            chart.getData().clear();
-            errorMessage.setText("No valid points to plot for this function and interval.");
-            return;
-        }
-
-        //Success: add the series and clear any previous error
-        chart.getData().add(series);
-        errorMessage.setText("");
-    }
-
-    /**
-     * Validates the user inputs
-     *
-     * @return true if all inputs are valid, false otherwise.
-     */
-    public boolean inputValidation() {
-        double lowerBound;
-        double upperBound;
-        int numPoints;
-
-        //Validate lower bound
-        try {
-            lowerBound = Double.parseDouble(lowerBoundText.getText());
-        } catch (NumberFormatException e) {
-            errorMessage.setText("Lower bound must be a valid number.");
-            return false;
-        }
-
-        //Validate upper bound
-        try {
-            upperBound = Double.parseDouble(upperBoundText.getText());
-        } catch (NumberFormatException e) {
-            errorMessage.setText("Upper bound must be a valid number.");
-            return false;
-        }
-
-        //Order check
-        if (lowerBound >= upperBound) {
-            errorMessage.setText("Lower bound must be strictly less than upper bound.");
-            return false;
-        }
-
-        //Validate number of points
-        try {
-            numPoints = Integer.parseInt(numPointsText.getText());
-        } catch (NumberFormatException e) {
-            errorMessage.setText("Number of points must be an integer.");
-            return false;
-        }
-
-        if (numPoints <= 0 || numPoints > 1000000) {
-            errorMessage.setText("Number of points must be between 1 and 1 000 000.");
-            return false;
-        }
-
-        //If we got here, everything is valid
-        errorMessage.setText("");
-        return true;
     }
 }
 
