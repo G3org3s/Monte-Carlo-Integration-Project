@@ -34,7 +34,11 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="29.0" minHeight="7.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="29.0" minHeight="7.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="29.0" minHeight="7.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="25.0" minHeight="3.0" prefHeight="22.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="25.0" minHeight="3.0" prefHeight="22.0" vgrow="SOMETIMES" />
                   <RowConstraints />
               </rowConstraints>
@@ -43,28 +47,28 @@
                </padding>
                <children>
                   <Label text="Equation" GridPane.columnSpan="2" />
-                  <Label text="Number of points" GridPane.columnIndex="2" GridPane.columnSpan="2" />
                   <Label text="Integration Method" GridPane.rowIndex="2" />
                   <ComboBox fx:id="methodCombo" onAction="#onMethodSelected" prefWidth="150.0" GridPane.rowIndex="3" />
                   <Label fx:id="endpointsLabel" text="Endpoints" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <ComboBox fx:id="endpointCombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Button mnemonicParsing="false" onAction="#clearOnAction" prefHeight="25.0" prefWidth="135.0" text="Clear" GridPane.rowIndex="6" />
-                  <Label text="Upper Bound" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                  <Label text="x =" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
-                  <TextField fx:id="upperBoundText" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                  <Label text="Lower Bound" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                  <Label text="x =" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="4" />
-                  <TextField fx:id="lowerBoundText" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                  <Button mnemonicParsing="false" onAction="#clearOnAction" prefHeight="25.0" prefWidth="135.0" text="Clear" GridPane.rowIndex="9" />
+                  <Label text="Upper Bound" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                  <Label text="x =" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                  <TextField fx:id="upperBoundText" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                  <Label text="Lower Bound" GridPane.columnIndex="3" />
+                  <Label text="x =" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                  <TextField fx:id="lowerBoundText" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                   <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="1">
                      <children>
                         <Label text="f(x) =" />
                         <TextField fx:id="equationText" prefHeight="25.0" prefWidth="117.0" />
                      </children>
                   </HBox>
-                  <TextField fx:id="numPointsText" maxWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <Label text="Net Area" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                  <Label fx:id="netAreaValue" GridPane.columnIndex="2" GridPane.rowIndex="6" />
-                  <Label fx:id="errorMessage" style="-fx-font-weight: bold; -fx-text-fill: red;" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7" />
+                  <Label text="Net Area" GridPane.columnIndex="3" GridPane.rowIndex="8" />
+                  <Label fx:id="netAreaValue" GridPane.columnIndex="3" GridPane.rowIndex="10" />
+                  <Label fx:id="errorMessage" style="-fx-font-weight: bold; -fx-text-fill: red;" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="11" />
+                  <TextField fx:id="numPointsText" maxWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                  <Label text="Number of points" GridPane.columnIndex="3" GridPane.rowIndex="4" />
                </children>
             </GridPane>
          </children>
@@ -74,4 +78,3 @@
       <Label style="-fx-font-size: 24; -fx-font-weight: bold;" text="Application" BorderPane.alignment="CENTER" />
    </top>
 </BorderPane>
-

@@ -43,8 +43,6 @@ public class MainViewController {
 
     private Expression currentFunction;
 
-    private Group riemannGroup;
-
     @FXML
     private StackPane graphPane;
 
@@ -114,6 +112,7 @@ public class MainViewController {
 
         //When lower bound changes, replot if we have a valid function
         lowerBoundText.textProperty().addListener((obs, oldValue, newValue) -> {
+            inputValidation();
             if (currentFunction != null) {
                 plotFunction(currentFunction);
             }
@@ -121,6 +120,7 @@ public class MainViewController {
 
         //When upper bound changes, replot if we have a valid function
         upperBoundText.textProperty().addListener((obs, oldValue, newValue) -> {
+            inputValidation();
             if (currentFunction != null) {
                 plotFunction(currentFunction);
             }
