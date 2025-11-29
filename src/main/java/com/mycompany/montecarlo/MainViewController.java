@@ -319,30 +319,6 @@ public class MainViewController {
     
     private void riemannDisplay() {
         System.out.println("Displaying Riemann Sum method");
-        
-        // Start with left -> modify for right
-        double width = (upperBound - lowerBound) / numPoints;
-        
-        double xCoord = xAxis.getDisplayPosition(0);
-        double yCoord = yAxis.getDisplayPosition(0);
-        
-        // Trying to do the rectangle position
-        
-        Node plotArea = chart.lookup(".chart-plot-background");
-        
-        double xPixel = xAxis.getDisplayPosition(0);
-        double yPixel = yAxis.getDisplayPosition(0);
-        
-        Point2D plotLocal = new Point2D(xPixel, yPixel);
-        Point2D scenePoint = plotArea.sceneToLocal(plotLocal);
-        Point2D stackPoint = graphPane.sceneToLocal(scenePoint);
-        
-        Rectangle rect = new Rectangle(0, 0, 5, 5);
-        rect.setStyle("-fx-fill: blue;");
-        graphPane.getChildren().add(rect);
-        
-        rect.setLayoutX(stackPoint.getX());
-        System.out.println(-stackPoint.getX());
     }
     
     private void monteCarloDisplay() {
