@@ -139,6 +139,7 @@ public class MainViewController {
             buildAndVerify(equationText.getText());
         });
         
+        // When Riemann Sum integration direction is changed, update function and processes
         endpointCombo.valueProperty().addListener((obs, oldValue, newValue) -> {
             buildAndVerify(equationText.getText());
         });
@@ -272,7 +273,7 @@ public class MainViewController {
         errorMessage.setText("");
         
         // Plot the function using the current bounds
-        plotFunction(currentExpression);
+        plotFunction();
             
         // TODO: call Georges' equations method
         
@@ -285,7 +286,7 @@ public class MainViewController {
      *
      * @param expression a compiled exp4j Expression representing f(x)
      */
-    private void plotFunction(Expression expression) {
+    private void plotFunction() {
         // Update upper and lower bounds
         xAxis.setLowerBound(lowerBound);
         xAxis.setUpperBound(upperBound);
@@ -299,16 +300,22 @@ public class MainViewController {
 
         // Plot as many points as possible into the line chart to make it properly estimate the function
         for (double x = lowerBound; x <= upperBound; x += dx) {
-            expression.setVariable("x", x);
-            series.getData().add(new XYChart.Data<>(x, expression.evaluate()));
+            currentExpression.setVariable("x", x);
+            series.getData().add(new XYChart.Data<>(x, currentExpression.evaluate()));
         }
 
         // Add the series
         chart.getData().add(series);
         errorMessage.setText("");
     }
-
     
+    private void riemannDisplay() {
+        
+    }
+    
+    private void monteCarloDisplay() {
+        
+    }
     
     /**
      * Called when the integration method ComboBox value changes 
