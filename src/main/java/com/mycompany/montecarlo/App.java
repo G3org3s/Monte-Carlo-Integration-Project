@@ -5,14 +5,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import net.objecthunter.exp4j.ValidationResult;
 import net.objecthunter.exp4j.tokenizer.Tokenizer;
-
-// The primary class for creating and evaluating expressions
 import tk.pratanumandal.expr4j.ExpressionEvaluator;
 import tk.pratanumandal.expr4j.ExpressionEvaluator.Evaluator;
 import tk.pratanumandal.expr4j.OperatorRepository;
@@ -28,17 +25,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        
-        double xValue1 = 3.0;
-        
-        ExpressionBuilder eb = new ExpressionBuilder("3 + x");
-        eb.variable("x");
-        Expression exp = eb.build();
-        exp.setVariable("x", xValue1);
-        double e = exp.evaluate();
-        System.out.println(e);
-            
-        scene = new Scene(loadFXML("primary"), 640, 480);
+        scene = new Scene(loadFXML("IntroUIFXML"), 800, 600);
         stage.setScene(scene);
         stage.show();
     }
