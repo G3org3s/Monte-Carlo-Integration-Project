@@ -327,7 +327,7 @@ public class MainViewController {
         chart.layout();
         
         if ("Riemann Sum".equals(methodCombo.getValue())) {
-            Platform.runLater(() -> Platform.runLater(this::riemannDisplay));
+            riemannDisplay();
         } else {
             monteCarloDisplay();
         }
@@ -343,7 +343,6 @@ public class MainViewController {
         // Creating all the variables to help with the coordinate conversion
         Node plotArea = chart.lookup(".chart-plot-background"); // The visual area behind the chart
         Pane plotContent = (Pane) plotArea.getParent(); // Gets the StackPane (Parent of chart) and treats it as a pane
-        Bounds plotBounds = plotArea.getBoundsInParent(); // Converts the rectangular bounds of the plotting region to the pane's cooredinate system
         
         // Creates graphingGroup which will contain graphing points and the chart
         graphingGroup = new Group();
@@ -413,9 +412,9 @@ public class MainViewController {
             
             Rectangle rect;
             if (Y0 > Y1) {
-                rect = new Rectangle(X0, Y1, X1 - X0, Y0 - Y1);
+                rect = new Rectangle(X0, Y1, X1 - X0, Y0 - Y1); // Dealing with positive values
             } else {
-                rect = new Rectangle(X0, Y0, X1 - X0, Y1 - Y0);
+                rect = new Rectangle(X0, Y0, X1 - X0, Y1 - Y0); // Dealing with negative values
             }
                 
             rect.setFill(Color.color(0.2, 0.4, 1.0, 0.3));
