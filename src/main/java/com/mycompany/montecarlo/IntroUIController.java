@@ -18,7 +18,7 @@ public class IntroUIController {
 
     @FXML
     private Label projectTitle;
-    
+
     @FXML
     private Button startBtn;
 
