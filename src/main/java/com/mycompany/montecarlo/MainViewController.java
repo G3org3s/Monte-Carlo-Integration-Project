@@ -460,10 +460,10 @@ public class MainViewController {
 
             // Determine if point is inside the area
             boolean inside = false;
-            if (fAtPoint > 0 && fAtPoint >= plotPoints.get(num)) {
+            if (fAtPoint > 0 && fAtPoint >= plotPoints.get(num) && plotPoints.get(num) > 0) {
                 inside = true;
             }
-            if (fAtPoint < 0 && fAtPoint <= plotPoints.get(num)) {
+            if (fAtPoint < 0 && fAtPoint <= plotPoints.get(num) && plotPoints.get(num) < 0) {
                 inside = true;
             }
 
