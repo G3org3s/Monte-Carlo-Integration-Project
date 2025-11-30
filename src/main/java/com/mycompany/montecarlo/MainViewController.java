@@ -5,6 +5,8 @@
 package com.mycompany.montecarlo;
 
 import java.util.HashMap;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -165,12 +167,20 @@ public class MainViewController {
             buildAndVerify(equationText.getText());
         });
         
-        App.mainStage.maximizedProperty().addListener((obs, oldValue, newValue) -> {
-            buildAndVerify(equationText.getText());
+        App.mainStage.maximizedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                System.out.println("maximized");
+                undoGraphing();
+            }
         });
         
-        App.mainStage.iconifiedProperty().addListener((obs, oldValue, newValue) -> {
-            buildAndVerify(equationText.getText());
+        App.mainStage.iconifiedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                System.out.println("iconified");
+                undoGraphing();
+            }
         });
     }
 
