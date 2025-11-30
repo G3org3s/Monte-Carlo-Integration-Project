@@ -25,10 +25,12 @@ import tk.pratanumandal.expr4j.token.Function;
  */
 public class App extends Application {
 
-    private static Scene scene;
-
+    public static Scene scene;
+    public static Stage mainStage;
+    
     @Override
     public void start(Stage stage) throws IOException {
+        mainStage = stage;
         scene = new Scene(loadFXML("IntroUIFXML"), 800, 600);
         stage.setResizable(true);
 
