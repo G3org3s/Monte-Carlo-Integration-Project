@@ -31,8 +31,9 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         mainStage = stage;
+        stage.setTitle("Monte Carlo Integration Visualization");
         scene = new Scene(loadFXML("IntroUIFXML"), 800, 600);
-        stage.setResizable(true);
+        stage.setResizable(false);
 
         double left = 1;
         double right = 5;

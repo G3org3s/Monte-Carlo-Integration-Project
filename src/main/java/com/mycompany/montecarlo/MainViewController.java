@@ -158,30 +158,6 @@ public class MainViewController {
         endpointCombo.valueProperty().addListener((obs, oldValue, newValue) -> {
             buildAndVerify(equationText.getText());
         });
-        
-        App.scene.widthProperty().addListener((obs, oldValue, newValue) -> {
-            buildAndVerify(equationText.getText());
-        });
-        
-        App.scene.heightProperty().addListener((obs, oldValue, newValue) -> {
-            buildAndVerify(equationText.getText());
-        });
-        
-        App.mainStage.maximizedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                System.out.println("maximized");
-                undoGraphing();
-            }
-        });
-        
-        App.mainStage.iconifiedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                System.out.println("iconified");
-                undoGraphing();
-            }
-        });
     }
 
     /**
@@ -293,7 +269,6 @@ public class MainViewController {
             double y;
             try {
                 y = currentExpression.evaluate();
-                System.out.println(y);
             } catch (Exception e) {
                 currentExpression = null;
                 chart.getData().clear();
