@@ -4,6 +4,7 @@
  */
 package com.mycompany.montecarlo;
 
+import java.util.HashMap;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -81,6 +82,8 @@ public class MainViewController {
     private double upperBound; // The upper bound of the function
     
     private int numPoints; // The number of points of integration estimation
+    
+    private HashMap<Double, Double> plotPoints = new HashMap<>();
     
     // NOTE: A Group basically just keeps things together without any Layout (e.g. GridPane positions) on its children
     private Group graphingGroup; // The group within the StackPane that contains both the points and the LineChart
@@ -219,7 +222,7 @@ public class MainViewController {
         
         // Checks to see if the number of points is a reasonable number
         if (numPoints <= 0 || numPoints > 100000) {
-            errorMessage.setText("Number of points must be between 1 and 1,000,000");
+            errorMessage.setText("Number of points must be between 1 and 100,000");
             chart.getData().clear();
             return;
         }
@@ -286,9 +289,13 @@ public class MainViewController {
         
         // TODO: call Georges' equations methods
         if ("Riemann Sum".equals(methodCombo.getValue())) {
-//            App.integrateRiem(currentExpression, lowerBound, upperBound, numPoints, endpointCombo.getValue());
+            netAreaValue.setText(App.integrateRiem(currentExpression, lowerBound, upperBound, numPoints, endpointCombo.getValue()) + "");
         } else {
+            double min = App.getMin(currentExpression, lowerBound, upperBound);
+            double max = App.getMax(currentExpression, lowerBound, upperBound);
+            plotPoints = App.plotPoints(lowerBound, upperBound, min, max, numPoints);
             
+            netAreaValue.setText(App.integrateMonteCarlo(currentExpression, lowerBound, upperBound, plotPoints) + "");
         }
         
         // Plot the function using the current bounds
@@ -324,10 +331,10 @@ public class MainViewController {
         chart.getData().add(series);
         errorMessage.setText("");
         
+        chart.applyCss();
+        chart.layout();
+        
         if ("Riemann Sum".equals(methodCombo.getValue())) {
-            chart.applyCss();
-            chart.layout();
-            
             riemannDisplay();
         } else {
             monteCarloDisplay();
@@ -395,8 +402,6 @@ public class MainViewController {
             double Y0 = y0Local.getY(); // Bottom of the rectangle
             double Y1 = y1Local.getY(); // Top of the rectangle
             
-                // Using right endpoints just for the sake of simplicity
-            
                 // Creating the rectangle
             
             Rectangle rect;
@@ -414,17 +419,61 @@ public class MainViewController {
         }
     }
     
-    private void undoGraphing() {
+    private void monteCarloDisplay() {
+        System.out.println("Displaying Monte Carlo method");
         
+        // Creating all the variables to help with the coordinate conversion
+        Node plotArea = chart.lookup(".chart-plot-background"); // The visual area behind the chart
+        Pane plotContent = (Pane) plotArea.getParent(); // Gets the StackPane (Parent of chart) and treats it as a pane
+        
+        // Creates graphingGroup which will contain graphing points and the chart
+        graphingGroup = new Group();
+        plotContent.getChildren().add(graphingGroup);
+        
+        for (Double num : plotPoints.keySet()) {
+                // X Position calculations
+            
+            // Converting the math coordinates to Scene Coordinates
+            double axisX = xAxis.getDisplayPosition(num); // Gets the bottom left scene position of the rectangle
+            
+            // Converting the Local Coordinates to Scene Coordinates
+            Point2D xScene = xAxis.localToScene(axisX, 0);
+            
+            // Converting the Scene Coordinates into the plotContent (Pane) coordinates
+            Point2D xLocal = plotContent.sceneToLocal(xScene);
+            
+            // Getting the raw positions
+            double X = xLocal.getX();
+            
+                // Y Position calculations
+            
+            // Converting the math coordinates to Scene Coordinates
+            double axisY = yAxis.getDisplayPosition(plotPoints.get(num)); // The bottom of the rectangle will always be at 0
+            
+            // Converting the Local Coordinates to Scene Coordinates
+            Point2D yScene = yAxis.localToScene(0, axisY);
+            
+            // Converting the Scene Coordinates into the plotContent (Pane) coordinates
+            Point2D yLocal = plotContent.sceneToLocal(yScene);
+            
+            // Getting the raw positions
+            double Y = yLocal.getY();
+            
+            Rectangle rect = new Rectangle(X, Y, 2, 2);
+            rect.setFill(Color.color(0.2, 0.4, 1.0, 0.3));
+            rect.setStroke(Color.BLUE);
+            rect.setStrokeWidth(0.5);
+            
+            graphingGroup.getChildren().add(rect);
+        }
+    }
+    
+    private void undoGraphing() {
         ObservableList<Node> nodes = FXCollections.observableArrayList(graphingGroup.getChildren());
         
         for (Node node : nodes) {
             graphingGroup.getChildren().remove(node);
         }
-    }
-    
-    private void monteCarloDisplay() {
-        System.out.println("Displaying Monte Carlo method");
     }
     
     /**
@@ -469,4 +518,3 @@ public class MainViewController {
         netAreaValue.setText("");
     }
 }
-
