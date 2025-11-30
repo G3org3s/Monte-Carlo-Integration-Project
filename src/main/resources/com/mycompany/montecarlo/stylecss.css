@@ -1,0 +1,40 @@
+.text-field {
+    -fx-text-fill: #E7F5FF;
+}
+
+.combo-box-base {
+    -fx-text-fill: #E7F5FF;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: #E7F5FF;
+    -fx-background-color: #02091E;
+}
+
+/* Background of the chart area */
+.chart-plot-background {
+    -fx-background-color: rgba(3, 18, 48, 0.8);
+}
+
+/* Grid lines */
+.chart-horizontal-grid-lines,
+.chart-vertical-grid-lines {
+    -fx-stroke: rgba(76, 181, 255, 0.35);
+}
+
+/* Axis labels */
+.axis-label {
+    -fx-text-fill: #E7F5FF;
+    -fx-font-weight: bold;
+}
+
+/* Tick labels */
+.axis {
+    -fx-tick-label-fill: #E7F5FF;
+}
+
+/* Function line */
+.default-color0.chart-series-line {
+    -fx-stroke: #4CB5FF;
+    -fx-stroke-width: 2px;
+}
