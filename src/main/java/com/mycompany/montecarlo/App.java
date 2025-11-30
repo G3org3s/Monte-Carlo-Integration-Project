@@ -30,23 +30,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         scene = new Scene(loadFXML("IntroUIFXML"), 800, 600);
-        stage.setResizable(false);
-        
-//        double xValue1 = 5;
-//        
-//        ExpressionBuilder eb = new ExpressionBuilder("0.1*x^5 - 0.8x^4 - 1x^3 + 7x^2 - 6");
-//        eb.variable("x");
-//        Expression exp = eb.build();
-//        exp.setVariable("x", xValue1);
-//        double e = exp.evaluate(); 
-//        System.out.println(e);
-//        
-//        Expression test = eb.build();
-//        double min = getMin(test, -4, 40);
-//        double max = getMax(test, 0, 7);
-//        System.out.println(min);
-//        System.out.println(max);
-        
+        stage.setResizable(true);
         
         double left = -15;
         double right = 25;
@@ -63,12 +47,6 @@ public class App extends Application {
         System.out.println(maxi);
         
         double rn = 0;
-//        for (int i = 0; i < 10; i ++) {
-//            HashMap<Double, Double> pointss = plotPoints(left, right, mini, maxi, 5000);
-//            double area = integrateMonteCarlo(g, left, right, pointss);
-//            rn += area;
-//        }
-//        HashMap<Double, Double> pointss = plotPoints(left, right, mini, maxi, 10000);
         
         double area2 = integrateRiem(g, left, right, 500000, "left");
         
@@ -79,7 +57,7 @@ public class App extends Application {
         System.out.println(area3);
         
             
-        scene = new Scene(loadFXML("primary"), 640, 480);
+//        scene = new Scene(loadFXML("MainViewFXML"), 640, 480);
         stage.setScene(scene);
         stage.show();
     }

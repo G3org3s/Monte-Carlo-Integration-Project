@@ -285,6 +285,11 @@ public class MainViewController {
         errorMessage.setText("");
         
         // TODO: call Georges' equations methods
+        if ("Riemann Sum".equals(methodCombo.getValue())) {
+//            App.integrateRiem(currentExpression, lowerBound, upperBound, numPoints, endpointCombo.getValue());
+        } else {
+            
+        }
         
         // Plot the function using the current bounds
         plotFunction();
