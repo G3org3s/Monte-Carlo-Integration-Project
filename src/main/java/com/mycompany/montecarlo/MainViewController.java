@@ -341,6 +341,9 @@ public class MainViewController {
         }
     }
     
+    /**
+     * Displays the Riemann Sum method of integration
+     */
     private void riemannDisplay() {
         // Checking to see which endpoint is used
         String endpointChoice = endpointCombo.getValue();
@@ -419,6 +422,9 @@ public class MainViewController {
         }
     }
     
+    /**
+     * Displays the Monte Carlo estimation method
+     */
     private void monteCarloDisplay() {
         System.out.println("Displaying Monte Carlo method");
         
@@ -468,6 +474,9 @@ public class MainViewController {
         }
     }
     
+    /**
+     * Removes all the shapes displayed when called
+     */
     private void undoGraphing() {
         ObservableList<Node> nodes = FXCollections.observableArrayList(graphingGroup.getChildren());
         
