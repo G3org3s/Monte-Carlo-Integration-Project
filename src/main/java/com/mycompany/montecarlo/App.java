@@ -36,25 +36,6 @@ public class App extends Application {
         scene.getStylesheets().add(getClass().getResource("stylecss.css").toString());
         stage.setResizable(false);
 
-        double left = 1;
-        double right = 5;
-
-        ExpressionBuilder f = new ExpressionBuilder("x");
-        f.variable("x");
-        Expression g = f.build();
-
-        double mini = getMin(g, left, right);
-        double maxi = getMax(g, left, right);
-        System.out.println(mini);
-        System.out.println(maxi);
-
-        double area2 = integrateRiem(g, left, right, 10, "left");
-
-        HashMap<Double, Double> pointss2 = plotPoints(left, right, mini, maxi, 500);
-        double area3 = integrateMonteCarlo(g, left, right, pointss2);
-        System.out.println(area2);
-        System.out.println(area3);
-
 //        scene = new Scene(loadFXML("MainViewFXML"), 640, 480);
         stage.setScene(scene);
         stage.show();
