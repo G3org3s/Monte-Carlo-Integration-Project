@@ -27,12 +27,13 @@ public class App extends Application {
 
     public static Scene scene;
     public static Stage mainStage;
-    
+
     @Override
     public void start(Stage stage) throws IOException {
         mainStage = stage;
         stage.setTitle("Monte Carlo Integration Visualization");
         scene = new Scene(loadFXML("IntroUIFXML"), 800, 600);
+        scene.getStylesheets().add(getClass().getResource("stylecss.css").toString());
         stage.setResizable(false);
 
         double left = 1;

@@ -406,8 +406,8 @@ public class MainViewController {
                 rect = new Rectangle(X0, Y0, X1 - X0, Y1 - Y0); // Dealing with negative values
             }
 
-            rect.setFill(Color.color(0.2, 0.4, 1.0, 0.3));
-            rect.setStroke(Color.BLUE);
+            rect.setFill(Color.web("#FFD700", 0.35));
+            rect.setStroke(Color.web("#FFD700"));
             rect.setStrokeWidth(0.5);
 
             graphingGroup.getChildren().add(rect);
@@ -468,13 +468,11 @@ public class MainViewController {
             }
 
             Rectangle rect = new Rectangle(X, Y, 2, 2);
-            
+
             if (inside) {
-                rect.setFill(Color.color(0.2, 0.4, 1.0, 0.3)); // blue (inside)
-                rect.setStroke(Color.BLUE);
+                rect.setFill(Color.web("#00FF00", 0.55));
             } else {
-                rect.setFill(Color.color(1.0, 0.0, 0.0, 0.4)); // red (outside)
-                rect.setStroke(Color.RED);
+                rect.setFill(Color.RED);
             }
             rect.setStrokeWidth(0.5);
 
