@@ -46,7 +46,7 @@ public class App extends Application {
         System.out.println(mini);
         System.out.println(maxi);
 
-        double area2 = integrateRiem(g, left, right, 100, "right");
+        double area2 = integrateRiem(g, left, right, 10, "left");
 
         HashMap<Double, Double> pointss2 = plotPoints(left, right, mini, maxi, 500);
         double area3 = integrateMonteCarlo(g, left, right, pointss2);
@@ -188,10 +188,8 @@ public class App extends Application {
             // Function is non-negative on the interval
             min = 0;
         } else if (max <= 0) {
-            double temp = min;
-            min = max;
-            max = temp;
-        } 
+            max = 0;
+        }
         for (int i = 0; i < numPoints; i++) {
             double x = leftBound + (Math.random() * (rightBound - leftBound));
             double y = min + (Math.random() * (max - min));
@@ -218,16 +216,16 @@ public class App extends Application {
         double area = 0;
 
         if (endPoints.equalsIgnoreCase("right")) {
-            for (double x = leftBound + dx; x <= rightBound; x += dx) {
+            for (long i = 1; i <= numPoints; i++) {
+                double x = leftBound + i * dx;
                 function.setVariable("x", x);
-                double h = function.evaluate();
-                area += h * dx;
+                area += function.evaluate() * dx;
             }
         } else if (endPoints.equalsIgnoreCase("left")) {
-            for (double x = rightBound - dx; x > leftBound; x -= dx) {
+            for (long i = 0; i < numPoints; i++) {
+                double x = leftBound + i * dx;
                 function.setVariable("x", x);
-                double h = function.evaluate();
-                area += h * dx;
+                area += function.evaluate() * dx;
             }
         }
 
