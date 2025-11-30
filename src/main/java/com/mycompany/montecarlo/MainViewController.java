@@ -4,14 +4,11 @@
  */
 package com.mycompany.montecarlo;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -23,7 +20,6 @@ import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -120,7 +116,7 @@ public class MainViewController {
         chart = new LineChart<>(xAxis, yAxis);
         chart.setLegendVisible(false);
         chart.setCreateSymbols(false);
-//        graphingGroup.getChildren().add(chart); // Adds chart to the graphingGroup to make coordinate calculations possible later
+        chart.setAnimated(false);
         
         // Make the chart fill the graphPane
         chart.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
@@ -222,7 +218,7 @@ public class MainViewController {
         }
         
         // Checks to see if the number of points is a reasonable number
-        if (numPoints <= 0 || numPoints > 1000000) {
+        if (numPoints <= 0 || numPoints > 100000) {
             errorMessage.setText("Number of points must be between 1 and 1,000,000");
             chart.getData().clear();
             return;
@@ -323,10 +319,10 @@ public class MainViewController {
         chart.getData().add(series);
         errorMessage.setText("");
         
-        chart.applyCss();
-        chart.layout();
-        
         if ("Riemann Sum".equals(methodCombo.getValue())) {
+            chart.applyCss();
+            chart.layout();
+            
             riemannDisplay();
         } else {
             monteCarloDisplay();
@@ -334,8 +330,6 @@ public class MainViewController {
     }
     
     private void riemannDisplay() {
-        System.out.println("Displaying Riemann Sum method");
-        
         // Checking to see which endpoint is used
         String endpointChoice = endpointCombo.getValue();
         boolean useRight = "Right".equals(endpointChoice);
@@ -377,30 +371,20 @@ public class MainViewController {
             
                 // Y Position calculations
             
-            currentExpression.setVariable("x", x0);
+            currentExpression.setVariable("x", sampleX);
             double y = currentExpression.evaluate();
-                
-            System.out.println("-------------- POINT: " + x + " -------------");
-            
-            System.out.println("Math Value: " + y);
             
             // Converting the math coordinates to Scene Coordinates
             double axisY0 = yAxis.getDisplayPosition(0); // The bottom of the rectangle will always be at 0
             double axisY1 = yAxis.getDisplayPosition(y); // The top of the rectangle will be wherever the y position is
             
-            System.out.println("Display Value: " + axisY1);
-            
             // Converting the Local Coordinates to Scene Coordinates
             Point2D y0Scene = yAxis.localToScene(0, axisY0);
             Point2D y1Scene = yAxis.localToScene(0, axisY1);
             
-            System.out.println("Scene Value: " + y1Scene.getY());
-            
             // Converting the Scene Coordinates into the plotContent (Pane) coordinates
             Point2D y0Local = plotContent.sceneToLocal(y0Scene);
             Point2D y1Local = plotContent.sceneToLocal(y1Scene);
-            
-            System.out.println("Pane Value: " + y1Local.getY());
             
             // Getting the raw positions
             double Y0 = y0Local.getY(); // Bottom of the rectangle
