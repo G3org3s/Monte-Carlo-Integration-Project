@@ -5,6 +5,8 @@
 package com.mycompany.montecarlo;
 
 import java.util.HashMap;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -156,22 +158,6 @@ public class MainViewController {
         endpointCombo.valueProperty().addListener((obs, oldValue, newValue) -> {
             buildAndVerify(equationText.getText());
         });
-        
-        App.scene.widthProperty().addListener((obs, oldValue, newValue) -> {
-            buildAndVerify(equationText.getText());
-        });
-        
-        App.scene.heightProperty().addListener((obs, oldValue, newValue) -> {
-            buildAndVerify(equationText.getText());
-        });
-        
-        App.mainStage.maximizedProperty().addListener((obs, oldValue, newValue) -> {
-            buildAndVerify(equationText.getText());
-        });
-        
-        App.mainStage.iconifiedProperty().addListener((obs, oldValue, newValue) -> {
-            buildAndVerify(equationText.getText());
-        });
     }
 
     /**
@@ -277,8 +263,8 @@ public class MainViewController {
         }
         
         // Plot as many points as possible into the line chart to make it properly estimate the function
-        for (double x = lowerBound; x <= upperBound; x += 0.001) { // TODO: Make the 0.0001 match Georges' function
-            currentExpression.setVariable("x", (double)(Math.round(lowerBound * 1000)) / 1000); // Round it to make sure changing it by a small number doesn't mess anything up
+        for (double x = lowerBound; x <= upperBound; x += 0.001) {
+            currentExpression.setVariable("x", Math.round(x * 1000) / 1000); // Round it to make sure changing it by a small number doesn't mess anything up
             
             double y;
             try {
@@ -290,7 +276,7 @@ public class MainViewController {
                 errorMessage.setText("Invalid function");
                 return;
             }
-
+            
             // Check to see if a point is NaN or infinity
             if (Double.isNaN(y) || Double.isInfinite(y)) {
                 currentExpression = null;
@@ -303,7 +289,6 @@ public class MainViewController {
         
         errorMessage.setText("");
         
-        // TODO: call Georges' equations methods
         if ("Riemann Sum".equals(methodCombo.getValue())) {
             netAreaValue.setText(App.integrateRiem(currentExpression, lowerBound, upperBound, numPoints, endpointCombo.getValue()) + "");
         } else {
@@ -335,7 +320,7 @@ public class MainViewController {
         chart.getData().clear(); // remove any old series
 
         // Use a fixed number of sample points for a smooth curve
-        double dx = (upperBound - lowerBound) / 1000; // TODO: Turn the 1000 (number of points) into whatever Georges used for his calculations
+        double dx = (upperBound - lowerBound) / 1000;
 
         // Plot as many points as possible into the line chart to make it properly estimate the function
         for (double x = lowerBound; x <= upperBound; x += dx) {
