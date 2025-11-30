@@ -31,7 +31,7 @@ public class IntroUIController {
     }
 
     private void loadIntroGIF() {
-        introGIF = new Image("file:images/IntroMonteCarlo.gif");
+        introGIF = new Image("file:images/MainMenu.png");
         introImageView.setImage(introGIF);
     }
 
