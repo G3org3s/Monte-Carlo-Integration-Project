@@ -72,21 +72,21 @@ public class App extends Application {
 
         double counterPos = 0;
         double counterNeg = 0;
-
+        
         for (Map.Entry<Double, Double> point : randPoints.entrySet()) {
             Double x = point.getKey();
             Double y = point.getValue();
 
             function.setVariable("x", x);
             double fAtPoint = function.evaluate();
-
-            if (fAtPoint > 0 && fAtPoint >= y) {
+            
+            if (fAtPoint >= 0 && fAtPoint >= y && y >= 0) {
                 counterPos += 1;
-            } else if (fAtPoint < 0 && fAtPoint <= y) {
+            } else if (fAtPoint <= 0 && fAtPoint <= y && y <= 0) {
                 counterNeg += 1;
             }
         }
-
+        
         double rectArea;
         if (minValue >= 0) {
             // Function is non-negative on the interval
@@ -102,7 +102,7 @@ public class App extends Application {
         long numPoints = randPoints.size();
         double posArea = (counterPos / numPoints) * rectArea;
         double negArea = (counterNeg / numPoints) * rectArea;
-
+                
         return posArea - negArea;
     }
 
