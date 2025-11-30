@@ -427,8 +427,6 @@ public class MainViewController {
      * Displays the Monte Carlo estimation method
      */
     private void monteCarloDisplay() {
-        System.out.println("Displaying Monte Carlo method");
-        
         // Creating all the variables to help with the coordinate conversion
         Node plotArea = chart.lookup(".chart-plot-background"); // The visual area behind the chart
         Pane plotContent = (Pane) plotArea.getParent(); // Gets the StackPane (Parent of chart) and treats it as a pane
