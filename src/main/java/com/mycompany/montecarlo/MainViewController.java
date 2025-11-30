@@ -289,7 +289,6 @@ public class MainViewController {
         
         errorMessage.setText("");
         
-        // TODO: call Georges' equations methods
         if ("Riemann Sum".equals(methodCombo.getValue())) {
             netAreaValue.setText(App.integrateRiem(currentExpression, lowerBound, upperBound, numPoints, endpointCombo.getValue()) + "");
         } else {
@@ -321,7 +320,7 @@ public class MainViewController {
         chart.getData().clear(); // remove any old series
 
         // Use a fixed number of sample points for a smooth curve
-        double dx = (upperBound - lowerBound) / 1000; // TODO: Turn the 1000 (number of points) into whatever Georges used for his calculations
+        double dx = (upperBound - lowerBound) / 1000;
 
         // Plot as many points as possible into the line chart to make it properly estimate the function
         for (double x = lowerBound; x <= upperBound; x += dx) {
