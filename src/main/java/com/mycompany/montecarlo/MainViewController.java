@@ -287,12 +287,13 @@ public class MainViewController {
         }
         
         // Plot as many points as possible into the line chart to make it properly estimate the function
-        for (double x = lowerBound; x <= upperBound; x += 0.001) { // TODO: Make the 0.0001 match Georges' function
-            currentExpression.setVariable("x", (double)(Math.round(lowerBound * 1000)) / 1000); // Round it to make sure changing it by a small number doesn't mess anything up
+        for (double x = lowerBound; x <= upperBound; x += 0.001) {
+            currentExpression.setVariable("x", Math.round(x * 1000) / 1000); // Round it to make sure changing it by a small number doesn't mess anything up
             
             double y;
             try {
                 y = currentExpression.evaluate();
+                System.out.println(y);
             } catch (Exception e) {
                 currentExpression = null;
                 chart.getData().clear();
@@ -300,7 +301,7 @@ public class MainViewController {
                 errorMessage.setText("Invalid function");
                 return;
             }
-
+            
             // Check to see if a point is NaN or infinity
             if (Double.isNaN(y) || Double.isInfinite(y)) {
                 currentExpression = null;

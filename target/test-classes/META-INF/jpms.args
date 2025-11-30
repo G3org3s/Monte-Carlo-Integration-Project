@@ -1,4 +1,0 @@
---patch-module
-com.mycompany.montecarlo=_
---add-reads
-com.mycompany.montecarlo=ALL-UNNAMED
