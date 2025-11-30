@@ -91,16 +91,16 @@ public class App extends Application {
         double counterPos = 0;
         double counterNeg = 0;
         
-        for(Map.Entry<Double, Double> point : randPoints.entrySet()) {
-            Double x = point.getKey();
-            Double y = point.getValue();
+        for(Double num : randPoints.keySet()) {
+            Double x = num;
+            Double y = randPoints.get(num);
             
-            function.setVariable("x", x);
+            function.setVariable("x", num);
             double fAtPoint = function.evaluate();
             
             if (fAtPoint > 0 && fAtPoint >= y) {
                 counterPos += 1;
-            } else if (fAtPoint < 0 && fAtPoint <= y)  {
+            } else if (fAtPoint < 0 && fAtPoint < y)  {
                 counterNeg += 1;
             }
         }
