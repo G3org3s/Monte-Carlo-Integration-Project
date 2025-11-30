@@ -242,6 +242,14 @@ public class MainViewController {
             errorMessage.setText("Tangent and cotangent functions are not supported");
             return;
         }
+        
+        if (equation.contains("/")) {
+            currentExpression = null;
+            chart.getData().clear();
+
+            errorMessage.setText("Rational functions aren't supported");
+            return;
+        }
 
         // Checking to see if equation syntax is valid
         try {
@@ -258,11 +266,11 @@ public class MainViewController {
 
         // Plot as many points as possible into the line chart to make it properly estimate the function
         for (double x = lowerBound; x <= upperBound; x += 0.001) {
-            currentExpression.setVariable("x", Math.round(x * 1000) / 1000); // Round it to make sure changing it by a small number doesn't mess anything up
+            currentExpression.setVariable("x", (double)(Math.round(x * 1000)) / 1000); // Round it to make sure changing it by a small number doesn't mess anything up
 
             double y;
             try {
-                y = currentExpression.evaluate();
+                y = (double)(Math.round(currentExpression.evaluate() * 1000) / 1000);
             } catch (Exception e) {
                 currentExpression = null;
                 chart.getData().clear();
