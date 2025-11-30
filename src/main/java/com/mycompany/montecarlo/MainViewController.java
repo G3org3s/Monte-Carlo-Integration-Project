@@ -4,8 +4,12 @@
  */
 package com.mycompany.montecarlo;
 
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.chart.LineChart;
@@ -29,7 +33,7 @@ import javafx.scene.shape.Rectangle;
  *
  * - Sets up a LineChart inside a StackPane 
  * - Parses the user-inputted function f(x) using exp4j 
- * - Automatically replots the function when the equation or bounds change
+ * - Automatically re-plots the function when the equation or bounds change
  * - Validates input and reports error messages
  */
 public class MainViewController {
@@ -46,25 +50,25 @@ public class MainViewController {
     private Label endpointsLabel; //Label for endpoint selection (visible only for Riemann Sum method)
 
     @FXML
-    private ComboBox<String> endpointCombo; //ComboBox for selecting "Left" or "Right" endpoints (Riemann Sum)
+    private ComboBox<String> endpointCombo; // ComboBox for selecting "Left" or "Right" endpoints (Riemann Sum)
 
     @FXML
     private TextField equationText; // The equation TextField
 
     @FXML
-    private TextField lowerBoundText;
+    private TextField lowerBoundText; // The TextField for the lower bound
 
     @FXML
-    private TextField upperBoundText;
+    private TextField upperBoundText; // The TextField for the upper bound
 
     @FXML
-    private ComboBox<String> methodCombo;
+    private ComboBox<String> methodCombo; // Dropdown for the integration method selection
 
     @FXML
-    private TextField numPointsText;
+    private TextField numPointsText; // The TextField for the number of points to compute
 
     @FXML
-    private Label netAreaValue;
+    private Label netAreaValue; // Label that displays the final area calculation
 
         // Variables
     
@@ -82,6 +86,9 @@ public class MainViewController {
     
     private int numPoints; // The number of points of integration estimation
     
+    // NOTE: A Group basically just keeps things together without any Layout (e.g. GridPane positions) on its children
+    private Group graphingGroup; // The group within the StackPane that contains both the points and the LineChart
+    
     /**
      * - Initialize ComboBoxes 
      * - Create and configure the chart 
@@ -90,6 +97,9 @@ public class MainViewController {
      */
     @FXML
     private void initialize() {
+        // Creates the group
+        graphingGroup = new Group();
+
         // Adds the ComboBox options
         methodCombo.getItems().addAll("Monte Carlo", "Riemann Sum");
         endpointCombo.getItems().addAll("Left", "Right");
@@ -97,19 +107,21 @@ public class MainViewController {
         // Endpoints controls not visible until "Riemann Sum" method is selected
         endpointsLabel.setVisible(false);
         endpointCombo.setVisible(false);
-
-        // Create axes and chart
+        
+        // Creates axes and chart
         xAxis = new NumberAxis();
         xAxis.setLabel("x");
         xAxis.setAutoRanging(false);
         
         yAxis = new NumberAxis();
         yAxis.setLabel("f(x)");
+        yAxis.setAutoRanging(true);
         
         chart = new LineChart<>(xAxis, yAxis);
         chart.setLegendVisible(false);
         chart.setCreateSymbols(false);
-
+//        graphingGroup.getChildren().add(chart); // Adds chart to the graphingGroup to make coordinate calculations possible later
+        
         // Make the chart fill the graphPane
         chart.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         chart.prefWidthProperty().bind(graphPane.widthProperty());
@@ -154,6 +166,8 @@ public class MainViewController {
      * @param equation the string from equationText
      */
     private void buildAndVerify(String equation) {
+        undoGraphing();
+        
             // Checking lower bound and number of points and integration type
             
         if (methodCombo.getValue() == null) {
@@ -274,11 +288,10 @@ public class MainViewController {
         
         errorMessage.setText("");
         
+        // TODO: call Georges' equations methods
+        
         // Plot the function using the current bounds
         plotFunction();
-            
-        // TODO: call Georges' equations method
-        
     }
 
     /**
@@ -310,8 +323,11 @@ public class MainViewController {
         chart.getData().add(series);
         errorMessage.setText("");
         
+        chart.applyCss();
+        chart.layout();
+        
         if ("Riemann Sum".equals(methodCombo.getValue())) {
-            riemannDisplay();
+            Platform.runLater(() -> Platform.runLater(this::riemannDisplay));
         } else {
             monteCarloDisplay();
         }
@@ -319,6 +335,104 @@ public class MainViewController {
     
     private void riemannDisplay() {
         System.out.println("Displaying Riemann Sum method");
+        
+        // Checking to see which endpoint is used
+        String endpointChoice = endpointCombo.getValue();
+        boolean useRight = "Right".equals(endpointChoice);
+        
+        // Creating all the variables to help with the coordinate conversion
+        Node plotArea = chart.lookup(".chart-plot-background"); // The visual area behind the chart
+        Pane plotContent = (Pane) plotArea.getParent(); // Gets the StackPane (Parent of chart) and treats it as a pane
+        Bounds plotBounds = plotArea.getBoundsInParent(); // Converts the rectangular bounds of the plotting region to the pane's cooredinate system
+        
+        // Creates graphingGroup which will contain graphing points and the chart
+        graphingGroup = new Group();
+        plotContent.getChildren().add(graphingGroup);
+        
+        double dx = (upperBound - lowerBound) / numPoints; // Width of the rectangle
+        
+        // Cycles through all the points to be rendered
+        for (int x = 0; x < numPoints; x++) {
+            double x0 = lowerBound + x * dx; // Bottom left point of the rectangle
+            double x1 = x0 + dx; // Bottom right point of the rectangle
+            
+            double sampleX = useRight ? x1: x0; // Where the rectangle is rendered is dependent on whether it's left or right endpoint
+            
+                // X Position calculations
+            
+            // Converting the math coordinates to Scene Coordinates
+            double axisX0 = xAxis.getDisplayPosition(x0); // Gets the bottom left scene position of the rectangle
+            double axisX1 = xAxis.getDisplayPosition(x1); // Gets the bottom right scene position of the rectangle
+            
+            // Converting the Local Coordinates to Scene Coordinates
+            Point2D x0Scene = xAxis.localToScene(axisX0, 0);
+            Point2D x1Scene = xAxis.localToScene(axisX1, 0);
+            
+            // Converting the Scene Coordinates into the plotContent (Pane) coordinates
+            Point2D x0Local = plotContent.sceneToLocal(x0Scene);
+            Point2D x1Local = plotContent.sceneToLocal(x1Scene);
+            
+            // Getting the raw positions
+            double X0 = x0Local.getX();
+            double X1 = x1Local.getX();
+            
+                // Y Position calculations
+            
+            currentExpression.setVariable("x", x0);
+            double y = currentExpression.evaluate();
+                
+            System.out.println("-------------- POINT: " + x + " -------------");
+            
+            System.out.println("Math Value: " + y);
+            
+            // Converting the math coordinates to Scene Coordinates
+            double axisY0 = yAxis.getDisplayPosition(0); // The bottom of the rectangle will always be at 0
+            double axisY1 = yAxis.getDisplayPosition(y); // The top of the rectangle will be wherever the y position is
+            
+            System.out.println("Display Value: " + axisY1);
+            
+            // Converting the Local Coordinates to Scene Coordinates
+            Point2D y0Scene = yAxis.localToScene(0, axisY0);
+            Point2D y1Scene = yAxis.localToScene(0, axisY1);
+            
+            System.out.println("Scene Value: " + y1Scene.getY());
+            
+            // Converting the Scene Coordinates into the plotContent (Pane) coordinates
+            Point2D y0Local = plotContent.sceneToLocal(y0Scene);
+            Point2D y1Local = plotContent.sceneToLocal(y1Scene);
+            
+            System.out.println("Pane Value: " + y1Local.getY());
+            
+            // Getting the raw positions
+            double Y0 = y0Local.getY(); // Bottom of the rectangle
+            double Y1 = y1Local.getY(); // Top of the rectangle
+            
+                // Using right endpoints just for the sake of simplicity
+            
+                // Creating the rectangle
+            
+            Rectangle rect;
+            if (Y0 > Y1) {
+                rect = new Rectangle(X0, Y1, X1 - X0, Y0 - Y1);
+            } else {
+                rect = new Rectangle(X0, Y0, X1 - X0, Y1 - Y0);
+            }
+                
+            rect.setFill(Color.color(0.2, 0.4, 1.0, 0.3));
+            rect.setStroke(Color.BLUE);
+            rect.setStrokeWidth(0.5);
+            
+            graphingGroup.getChildren().add(rect);
+        }
+    }
+    
+    private void undoGraphing() {
+        
+        ObservableList<Node> nodes = FXCollections.observableArrayList(graphingGroup.getChildren());
+        
+        for (Node node : nodes) {
+            graphingGroup.getChildren().remove(node);
+        }
     }
     
     private void monteCarloDisplay() {
