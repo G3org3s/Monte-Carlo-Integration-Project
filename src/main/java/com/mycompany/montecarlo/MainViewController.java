@@ -156,6 +156,22 @@ public class MainViewController {
         endpointCombo.valueProperty().addListener((obs, oldValue, newValue) -> {
             buildAndVerify(equationText.getText());
         });
+        
+        App.scene.widthProperty().addListener((obs, oldValue, newValue) -> {
+            buildAndVerify(equationText.getText());
+        });
+        
+        App.scene.heightProperty().addListener((obs, oldValue, newValue) -> {
+            buildAndVerify(equationText.getText());
+        });
+        
+        App.mainStage.maximizedProperty().addListener((obs, oldValue, newValue) -> {
+            buildAndVerify(equationText.getText());
+        });
+        
+        App.mainStage.iconifiedProperty().addListener((obs, oldValue, newValue) -> {
+            buildAndVerify(equationText.getText());
+        });
     }
 
     /**
