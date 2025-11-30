@@ -270,7 +270,7 @@ public class MainViewController {
 
             double y;
             try {
-                y = (double)(Math.round(currentExpression.evaluate() * 1000) / 1000);
+                y = currentExpression.evaluate();
             } catch (Exception e) {
                 currentExpression = null;
                 chart.getData().clear();
