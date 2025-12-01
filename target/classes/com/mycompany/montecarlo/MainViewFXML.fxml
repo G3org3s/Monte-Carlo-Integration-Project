@@ -69,7 +69,7 @@
                   </HBox>
                   <Label style="-fx-text-fill: #E7F5FF;" text="Net Area" GridPane.columnIndex="3" GridPane.rowIndex="8" />
                   <Label fx:id="netAreaValue" style="-fx-text-fill: #E7F5FF; -fx-font-weight: bold;" GridPane.columnIndex="3" GridPane.rowIndex="9" />
-                  <Label fx:id="errorMessage" style="-fx-font-weight: bold; -fx-text-fill: red;" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="11" />
+                  <Label fx:id="errorMessage" style="-fx-font-weight: bold; -fx-text-fill: red;" GridPane.columnSpan="3" GridPane.rowIndex="11" />
                   <TextField fx:id="numPointsText" maxWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" style="-fx-background-color: rgba(2, 9, 30, 0.9); -fx-border-color: #4CB5FF; -fx-border-radius: 6;" GridPane.columnIndex="3" GridPane.rowIndex="5" />
                   <Label style="-fx-text-fill: #E7F5FF;" text="Number of points" GridPane.columnIndex="3" GridPane.rowIndex="4" />
                </children>
