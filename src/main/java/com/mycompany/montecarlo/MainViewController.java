@@ -5,6 +5,7 @@
 package com.mycompany.montecarlo;
 
 import java.util.HashMap;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -212,7 +213,7 @@ public class MainViewController {
 
         // Checks to see if the upper and lower bounds are within their limits
         if (lowerBound < -1000 || upperBound > 1000) {
-            errorMessage.setText("Upper bound has to be less than 1000 and lower bound has to be greater than -1000");
+            errorMessage.setText("Bounds must be in between [-1000 to 1000]");
             chart.getData().clear();
             return;
         }
@@ -539,5 +540,10 @@ public class MainViewController {
         chart.getData().clear();
         errorMessage.setText("");
         netAreaValue.setText("");
+    }
+    
+    @FXML
+    void exitOnAction(ActionEvent event) {
+        Platform.exit();
     }
 }
