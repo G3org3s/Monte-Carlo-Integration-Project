@@ -541,7 +541,6 @@ public class MainViewController {
         errorMessage.setText("");
         netAreaValue.setText("");
     }
-<<<<<<< HEAD
 
     /**
      * Executes the core validation and calculation logic without any JavaFX
@@ -681,11 +680,10 @@ public class MainViewController {
 
         // 12. Success
         return "";
-=======
+    }
     
     @FXML
     void exitOnAction(ActionEvent event) {
         Platform.exit();
->>>>>>> 9090e43afb428cfa4a542b52b5eab9aa582015d1
     }
 }
