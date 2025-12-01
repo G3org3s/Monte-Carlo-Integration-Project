@@ -1,4 +1,11 @@
+<<<<<<< HEAD
 C:\Users\quent\OneDrive\Documents\NetBeansProjects\Monte-Carlo-Integration-Project\src\main\java\com\mycompany\montecarlo\IntroUIController.java
 C:\Users\quent\OneDrive\Documents\NetBeansProjects\Monte-Carlo-Integration-Project\src\main\java\com\mycompany\montecarlo\App.java
 C:\Users\quent\OneDrive\Documents\NetBeansProjects\Monte-Carlo-Integration-Project\src\main\java\com\mycompany\montecarlo\MainViewController.java
 C:\Users\quent\OneDrive\Documents\NetBeansProjects\Monte-Carlo-Integration-Project\src\main\java\module-info.java
+=======
+C:\Users\Cheero\Documents\NetBeansProjects\Monte-Carlo-Integration-Project\src\main\java\module-info.java
+C:\Users\Cheero\Documents\NetBeansProjects\Monte-Carlo-Integration-Project\src\main\java\com\mycompany\montecarlo\App.java
+C:\Users\Cheero\Documents\NetBeansProjects\Monte-Carlo-Integration-Project\src\main\java\com\mycompany\montecarlo\IntroUIController.java
+C:\Users\Cheero\Documents\NetBeansProjects\Monte-Carlo-Integration-Project\src\main\java\com\mycompany\montecarlo\MainViewController.java
+>>>>>>> 40f57f6611977a7010208807658b5d7569824f9d

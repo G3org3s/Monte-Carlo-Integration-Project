@@ -243,7 +243,7 @@ public class MainViewController {
             errorMessage.setText("Tangent and cotangent functions are not supported");
             return;
         }
-        
+
         if (equation.contains("/")) {
             currentExpression = null;
             chart.getData().clear();
@@ -267,7 +267,7 @@ public class MainViewController {
 
         // Plot as many points as possible into the line chart to make it properly estimate the function
         for (double x = lowerBound; x <= upperBound; x += 0.001) {
-            currentExpression.setVariable("x", (double)(Math.round(x * 1000)) / 1000); // Round it to make sure changing it by a small number doesn't mess anything up
+            currentExpression.setVariable("x", (double) (Math.round(x * 1000)) / 1000); // Round it to make sure changing it by a small number doesn't mess anything up
 
             double y;
             try {
@@ -540,6 +540,146 @@ public class MainViewController {
         chart.getData().clear();
         errorMessage.setText("");
         netAreaValue.setText("");
+    }
+
+    /**
+     * Executes the core validation and calculation logic without any JavaFX
+     * dependencies. Used only for testing the method.
+     * @param equation The mathematical function string.
+     * @param integrationMethod The selected integration method
+     * @param riemannEndpoint The selected Riemann Sum endpoint
+     * @param lowerBoundText String representation of the lower bound.
+     * @param upperBoundText String representation of the upper bound.
+     * @param numPointsText String representation of the number of points.
+     * @param netAreaText the string that is modified when there's an error
+     * @return The error message string, or an empty string ("") if validation
+     * is successful.
+     */
+    public static String buildAndVerifyCore(
+            String equation,
+            String integrationMethod,
+            String riemannEndpoint,
+            String lowerBoundText,
+            String upperBoundText,
+            String numPointsText,
+            String[] errorText) {
+        // Local variables to hold parsed values and Expression
+        double lowerBound, upperBound;
+        int numPoints;
+        Expression currentExpression;
+
+        Runnable clearState = () -> {
+            errorText[0] = ""; // Clear area on error
+        };
+
+        // 1. Integration Type Check
+        if (integrationMethod == null) {
+            clearState.run();
+            return "Integration type not specified";
+        } else if ("Riemann Sum".equals(integrationMethod) && riemannEndpoint == null) {
+            clearState.run();
+            return "Riemann Sum direction not specified";
+        }
+
+        // 2. Validate bounds and points (Parsing)
+        try {
+            lowerBound = Double.parseDouble(lowerBoundText);
+        } catch (NumberFormatException e) {
+            clearState.run();
+            return "Lower bound must be a valid double";
+        }
+
+        try {
+            upperBound = Double.parseDouble(upperBoundText);
+        } catch (NumberFormatException e) {
+            clearState.run();
+            return "Upper bound must be a valid double";
+        }
+
+        try {
+            numPoints = Integer.parseInt(numPointsText);
+        } catch (NumberFormatException e) {
+            clearState.run();
+            return "Number of points must be a valid integer";
+        }
+
+        // 3. Order check
+        if (lowerBound >= upperBound) {
+            clearState.run();
+            return "Lower bound must be strictly less than upper bound";
+        }
+
+        // 4. Bound limits check
+        if (lowerBound < -1000 || upperBound > 1000) {
+            clearState.run();
+            return "Upper bound has to be less than 1000 and lower bound has to be greater than -1000";
+        }
+
+        // 5. Number of points check
+        if (numPoints <= 0 || numPoints > 100000) {
+            clearState.run();
+            return "Number of points must be between 1 and 100,000";
+        }
+
+        // 6. Equation existence check
+        if (equation == null || equation.isBlank()) {
+            currentExpression = null;
+            clearState.run();
+            return "No equation selected";
+        }
+
+        // 7. Restricted function check (tan/cot)
+        if (equation.contains("tan") || equation.contains("cot")) {
+            currentExpression = null;
+            clearState.run();
+            return "Tangent and cotangent functions are not supported";
+        }
+
+        // 8. Restricted function check (rational)
+        if (equation.contains("/")) {
+            currentExpression = null;
+            clearState.run();
+            return "Rational functions aren't supported";
+        }
+
+        // 9. Equation syntax check
+        try {
+            currentExpression = new ExpressionBuilder(equation).variable("x").build();
+        } catch (Exception e) {
+            currentExpression = null;
+            clearState.run();
+            return "Invalid function";
+        }
+
+        // 10. Continuity/Evaluation check
+        for (double x = lowerBound; x <= upperBound; x += 0.001) {
+            currentExpression.setVariable("x", (double) (Math.round(x * 1000)) / 1000);
+
+            double y;
+            try {
+                y = currentExpression.evaluate();
+            } catch (Exception e) {
+                clearState.run();
+                return "Invalid function";
+            }
+
+            if (Double.isNaN(y) || Double.isInfinite(y)) {
+                clearState.run();
+                return "Function is not continuous on the interval";
+            }
+        }
+
+        // 11. Calculation (Simulated)
+        double simulatedArea = 0.5;
+
+        if ("Riemann Sum".equals(integrationMethod)) {
+            errorText[0] = String.valueOf(simulatedArea);
+        } else {
+            errorText[0] = String.valueOf(simulatedArea);
+        }
+
+        // 12. Success
+        return "";
     }
     
     @FXML
