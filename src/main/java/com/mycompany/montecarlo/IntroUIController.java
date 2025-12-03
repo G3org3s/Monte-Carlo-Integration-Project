@@ -14,7 +14,7 @@ import javafx.scene.image.ImageView;
 
 public class IntroUIController {
 
-    private Image introGIF;
+    private Image introImage;
 
     @FXML
     private Label projectTitle;
@@ -27,12 +27,12 @@ public class IntroUIController {
 
     @FXML
     private void initialize() {
-        loadIntroGIF();
+        loadIntroImage();
     }
 
-    private void loadIntroGIF() {
-        introGIF = new Image("file:images/MainMenu.png");
-        introImageView.setImage(introGIF);
+    private void loadIntroImage() {
+        introImage = new Image("file:images/MainMenu.png");
+        introImageView.setImage(introImage);
     }
 
     @FXML
@@ -42,8 +42,8 @@ public class IntroUIController {
         projectTitle.setVisible(false);
         try {
             App.setRoot("MainViewFXML");
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
