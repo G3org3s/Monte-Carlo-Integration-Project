@@ -18,7 +18,7 @@ To run the **Monte Carlo Integration Visualization**, you must first enter every
 4. Created monteCarloDisplay() method to display Monte Carlo points and how they're rendered and considered on the function
 5. Created clearGraph() method to clear the graph of all the graphical points displayed on it
 
-### George
+### Georges
 
 1. Created integrateMonteCarlo() method to handle the mathematical integration of a function using the Monte Carlo integration technique
 2. Created the integrateRiem() method to handle the matematical integration of a function using the Riemann Sum integration technique
