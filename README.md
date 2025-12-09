@@ -26,4 +26,8 @@ To run the **Monte Carlo Integration Visualization**, you must first enter every
 
 ### Edric
 
-1. Uh idk moral support
+1. Created the plotFunction() method
+2. Handled all FXML structure
+3. Created all UI and aesthetic
+4. Helped implement riemannDisplay() method
+5. Made the different colors for monteCarloDispolay()
